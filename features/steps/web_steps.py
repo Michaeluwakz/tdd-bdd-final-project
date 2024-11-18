@@ -132,3 +132,39 @@ def step_impl(context, element_name, text_string):
     )
     element.clear()
     element.send_keys(text_string)
+
+
+@when('I press the "{button}" button')
+def step_impl(context, button):
+    """ Click a button by its name """
+    button_id = f"{button.lower()}-btn"
+    button_element = context.driver.find_element_by_id(button_id)
+    button_element.click()
+
+@then('I should see "{name}" in the results')
+def step_impl(context, name):
+    """ Verify that a name or text is present in the search results """
+    found = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, 'search_results'),
+            name
+        )
+    )
+    assert found, f"{name} was not found in the results"
+
+@then('I should not see "{name}" in the results')
+def step_impl(context, name):
+    """ Verify that a name or text is NOT present in the search results """
+    element = context.driver.find_element_by_id('search_results')
+    assert name not in element.text, f"{name} was unexpectedly found in the results"
+
+@then('I should see the message "{message}"')
+def step_impl(context, message):
+    """ Verify that a specific flash message is displayed """
+    found = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.text_to_be_present_in_element(
+            (By.ID, 'flash_message'),
+            message
+        )
+    )
+    assert found, f"Message '{message}' was not found"
